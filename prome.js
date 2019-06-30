@@ -21,6 +21,11 @@ export default {
         },
     },
     tabs: {
+        get(tabId) {
+            return new Promise(resolve => {
+                chrome.tabs.get(tabId, resolve);
+            });
+        },
         query(queryInfo) { //chrome.tabs.query(object queryInfo, function callback)
             return new Promise(resolve => {
                 chrome.tabs.query(queryInfo, resolve);
