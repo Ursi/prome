@@ -5,6 +5,11 @@ export default {
                 chrome.bookmarks.getChildren(id, resolve);
             });
         },
+        move(id, destination) {
+            return new Promise(resolve => {
+                chrome.bookmarks.move(id, destination, resolve);
+            });
+        },
     },
     storage: {
         sync: {
