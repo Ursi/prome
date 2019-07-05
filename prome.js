@@ -9,8 +9,8 @@ function getPath(obj, path) {
 
 function makePromise(path, cbPos) {
     return function(...args) {
-        let method = getPath(chrome, path);
         let methodThis = getPath(chrome, path.slice(0, -1));
+        let method = methodThis[path[path.length - 1]];
         return new Promise(resolve => {
             args[cbPos] = resolve;
             method.call(methodThis, ...args);
