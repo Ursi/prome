@@ -13,7 +13,7 @@ function makePromise(path, cbPos) {
         let method = methodThis[path[path.length - 1]];
         return new Promise(resolve => {
             args[cbPos] = resolve;
-            method.call(methodThis, ...args);
+            method.apply(methodThis, args);
         });
     }
 }
