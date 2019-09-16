@@ -23,6 +23,9 @@ let promiseMe =  {//the number is the index of the callback
 		getChildren: 1,
 		move: 2,
 	},
+	browsingData: {
+		remove: 2
+	},
 	storage: {
 		sync: {
 			get: 1,
