@@ -1,57 +1,24 @@
-const prome = {};
-(()=>{
-	const promiseMe =  {//the number is the index of the callback
-		bookmarks: {
-			getChildren: 1,
-			move: 2,
-		},
-		browsingData: {
-			remove: 2
-		},
-		storage: {
-			sync: {
-				get: 1,
-				set: 1,
-			},
-		},
-		tabs: {
-			get: 1,
-			query: 1,
-			sendMessage: 3,
-			update: 2,
-		},
-	}
+const prome = new Proxy(()=>{}, {
+	apply(targ, flag, args) {
+		if (args[0] === targ) {
+			if (!targ.chromeMethod) targ.chromeMethod = chrome;
+			targ.chromeThis = targ.chromeMethod;
+			targ.chromeMethod = targ.chromeMethod[args[1]];
+		} else {
+			const {
+				chromeMethod,
+				chromeThis,
+			} = targ;
 
-	function getPath(obj, path) {
-		let value = obj;
-		for (let pathPart of path) {
-			value = value[pathPart];
-		}
-
-		return value;
-	}
-
-	function makePromise(path, cbPos) {
-		return function(...args) {
-			const
-				methodThis = getPath(chrome, path.slice(0, -1)),
-				method = methodThis[path[path.length - 1]];
-
+			delete targ.chromeMethod;
+			delete targ.chromeThis;
 			return new Promise(resolve => {
-				args[cbPos] = resolve;
-				method.apply(methodThis, args);
+				chromeMethod.call(chromeThis, ...args, resolve)
 			});
 		}
-	}
-
-	(function makeProme(obj, path = []) {
-		for (let [p, v] of Object.entries(obj)) {
-			if (typeof v === `number`) {
-				getPath(prome, path)[p] = makePromise(path.concat([p]), v);
-			} else {
-				getPath(prome, path)[p] = {};
-				makeProme(v, path.concat(p));
-			}
-		}
-	})(promiseMe);
-})();
+	},
+	get(targ, prop) {
+		prome(targ, prop);
+		return prome;
+	},
+});
