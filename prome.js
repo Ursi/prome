@@ -12,8 +12,12 @@ const prome = new Proxy(()=>{}, {
 
 			delete targ.chromeMethod;
 			delete targ.chromeThis;
-			return new Promise(resolve => {
-				chromeMethod.call(chromeThis, ...args, resolve)
+			return new Promise((resolve, reject) => {
+				try {
+					chromeMethod.call(chromeThis, ...args, resolve);
+				} catch (error) {
+					reject(error);
+				}
 			});
 		}
 	},
