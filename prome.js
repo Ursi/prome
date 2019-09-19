@@ -1,9 +1,9 @@
 const prome = new Proxy(()=>{}, {
-	apply(targ, flag, args) {
-		if (args[0] === targ) {
+	apply(targ, thisArg, args) {
+		if (thisArg === targ) {
 			if (!targ.chromeMethod) targ.chromeMethod = chrome;
 			targ.chromeThis = targ.chromeMethod;
-			targ.chromeMethod = targ.chromeMethod[args[1]];
+			targ.chromeMethod = targ.chromeMethod[args[0]];
 		} else {
 			const {
 				chromeMethod,
@@ -18,7 +18,7 @@ const prome = new Proxy(()=>{}, {
 		}
 	},
 	get(targ, prop) {
-		prome(targ, prop);
+		Function.prototype.call.call(prome, targ, prop);
 		return prome;
 	},
 });
