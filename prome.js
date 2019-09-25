@@ -22,7 +22,11 @@ const prome = new Proxy(()=>{}, {
 		}
 	},
 	get(targ, prop) {
-		Function.prototype.call.call(prome, targ, prop);
-		return prome;
+		if (prop === Symbol.toPrimitive) {// chromium dev tools likes to call this
+			return ()=> `prome`;
+		} else {
+			Function.prototype.call.call(prome, targ, prop);
+			return prome;
+		}
 	},
 });
